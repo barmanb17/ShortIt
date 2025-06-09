@@ -24,6 +24,24 @@
         <ul id="shortened-urls"></ul>
     </div>
     <script>
+        const fetchShortenedURL = async () => {
+            const response = await fetch("/links");
+            const links = await response.json();
+            console.log("links", links);
+
+            const list = document.getElementById("shortened-urls");
+            list.innerHTML = "";
+
+            for (const [shortCode, url] of Object.entries(links)) {
+                const li = document.createElement('li');
+                const truncatedURL = url.length >= 30 ? `${url.slice(0, 30)}...`:url;
+                li.innerHTML = `<a href="/${shortCode}" target="_blank">${window.location.origin}/${shortCode}</a> - ${truncatedURL}`
+                list.appendChild(li)
+            }
+        }
+
+
+
         document.getElementById('shorten-form').addEventListener('submit', async (event)=> {
             event.preventDefault();
 
@@ -42,6 +60,7 @@
                 });
 
                 if(response.ok){
+                    fetchShortenedURL();
                     alert("Form submitted successfully");
                     event.target.reset();
                 } else {
@@ -54,6 +73,8 @@
             }
 
         })
+
+        fetchShortenedURL();
     </script>
 </body>
 </html>
